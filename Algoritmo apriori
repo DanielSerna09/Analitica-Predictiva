@@ -1,0 +1,940 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "name": "Untitled1.ipynb",
+      "version": "0.3.2",
+      "provenance": [],
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/DanielSerna09/Proyecto-01/blob/master/Algoritmo%20apriori\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "D75g4lBiZ288",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "%load_ext rpy2.ipython"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "ehD1dWSWZ9IG",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 843
+        },
+        "outputId": "36998beb-a330-4177-efd7-d98e4d096a64"
+      },
+      "source": [
+        "%%sh\n",
+        "if /usr/bin/test ! -d /usr/local/lib/R/site-library/arules;\n",
+        "then\n",
+        "    sudo Rscript -e 'install.packages(\"arules\")'\n",
+        "fi"
+      ],
+      "execution_count": 2,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "gcc -std=gnu99 -I\"/usr/share/R/include\" -DNDEBUG    -DNDEBUG -DNIMAPFN -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-VjHo9C/r-base-3.6.0=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c arrayIndex.c -o arrayIndex.o\n",
+            "gcc -std=gnu99 -I\"/usr/share/R/include\" -DNDEBUG    -DNDEBUG -DNIMAPFN -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-VjHo9C/r-base-3.6.0=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c bitmat.c -o bitmat.o\n",
+            "gcc -std=gnu99 -I\"/usr/share/R/include\" -DNDEBUG    -DNDEBUG -DNIMAPFN -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-VjHo9C/r-base-3.6.0=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c dll.c -o dll.o\n",
+            "gcc -std=gnu99 -I\"/usr/share/R/include\" -DNDEBUG    -DNDEBUG -DNIMAPFN -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-VjHo9C/r-base-3.6.0=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c issubset.c -o issubset.o\n",
+            "gcc -std=gnu99 -I\"/usr/share/R/include\" -DNDEBUG    -DNDEBUG -DNIMAPFN -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-VjHo9C/r-base-3.6.0=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c istree.c -o istree.o\n",
+            "gcc -std=gnu99 -I\"/usr/share/R/include\" -DNDEBUG    -DNDEBUG -DNIMAPFN -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-VjHo9C/r-base-3.6.0=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c matrix.c -o matrix.o\n",
+            "gcc -std=gnu99 -I\"/usr/share/R/include\" -DNDEBUG    -DNDEBUG -DNIMAPFN -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-VjHo9C/r-base-3.6.0=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c newS4object.c -o newS4object.o\n",
+            "gcc -std=gnu99 -I\"/usr/share/R/include\" -DNDEBUG    -DNDEBUG -DNIMAPFN -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-VjHo9C/r-base-3.6.0=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c ptree.c -o ptree.o\n",
+            "gcc -std=gnu99 -I\"/usr/share/R/include\" -DNDEBUG    -DNDEBUG -DNIMAPFN -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-VjHo9C/r-base-3.6.0=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c rapriori.c -o rapriori.o\n",
+            "gcc -std=gnu99 -I\"/usr/share/R/include\" -DNDEBUG    -DNDEBUG -DNIMAPFN -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-VjHo9C/r-base-3.6.0=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c reclat.c -o reclat.o\n",
+            "gcc -std=gnu99 -I\"/usr/share/R/include\" -DNDEBUG    -DNDEBUG -DNIMAPFN -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-VjHo9C/r-base-3.6.0=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c similarity.c -o similarity.o\n",
+            "gcc -std=gnu99 -I\"/usr/share/R/include\" -DNDEBUG    -DNDEBUG -DNIMAPFN -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-VjHo9C/r-base-3.6.0=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c symtab.c -o symtab.o\n",
+            "gcc -std=gnu99 -I\"/usr/share/R/include\" -DNDEBUG    -DNDEBUG -DNIMAPFN -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-VjHo9C/r-base-3.6.0=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c tfscan.c -o tfscan.o\n",
+            "gcc -std=gnu99 -I\"/usr/share/R/include\" -DNDEBUG    -DNDEBUG -DNIMAPFN -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-VjHo9C/r-base-3.6.0=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c tid_count.c -o tid_count.o\n",
+            "gcc -std=gnu99 -I\"/usr/share/R/include\" -DNDEBUG    -DNDEBUG -DNIMAPFN -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-VjHo9C/r-base-3.6.0=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c tract.c -o tract.o\n",
+            "gcc -std=gnu99 -I\"/usr/share/R/include\" -DNDEBUG    -DNDEBUG -DNIMAPFN -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-VjHo9C/r-base-3.6.0=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c vecops.c -o vecops.o\n",
+            "gcc -std=gnu99 -I\"/usr/share/R/include\" -DNDEBUG    -DNDEBUG -DNIMAPFN -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-VjHo9C/r-base-3.6.0=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c warm.c -o warm.o\n",
+            "gcc -std=gnu99 -shared -L/usr/lib/R/lib -Wl,-Bsymbolic-functions -Wl,-z,relro -o arules.so arrayIndex.o bitmat.o dll.o issubset.o istree.o matrix.o newS4object.o ptree.o rapriori.o reclat.o similarity.o symtab.o tfscan.o tid_count.o tract.o vecops.o warm.o -L/usr/lib/R/lib -lR\n",
+            "Creating a new generic function for ‘abbreviate’ in package ‘arules’\n",
+            "Creating a new generic function for ‘write’ in package ‘arules’\n"
+          ],
+          "name": "stdout"
+        },
+        {
+          "output_type": "stream",
+          "text": [
+            "Installing package into ‘/usr/local/lib/R/site-library’\n",
+            "(as ‘lib’ is unspecified)\n",
+            "trying URL 'https://cran.rstudio.com/src/contrib/arules_1.6-3.tar.gz'\n",
+            "Content type 'application/x-gzip' length 1907283 bytes (1.8 MB)\n",
+            "==================================================\n",
+            "downloaded 1.8 MB\n",
+            "\n",
+            "* installing *source* package ‘arules’ ...\n",
+            "** package ‘arules’ successfully unpacked and MD5 sums checked\n",
+            "** using staged installation\n",
+            "** libs\n",
+            "installing to /usr/local/lib/R/site-library/00LOCK-arules/00new/arules/libs\n",
+            "** R\n",
+            "** data\n",
+            "** inst\n",
+            "** byte-compile and prepare package for lazy loading\n",
+            "** help\n",
+            "*** installing help indices\n",
+            "** building package indices\n",
+            "** installing vignettes\n",
+            "** testing if installed package can be loaded from temporary location\n",
+            "** checking absolute paths in shared objects and dynamic libraries\n",
+            "** testing if installed package can be loaded from final location\n",
+            "** testing if installed package keeps a record of temporary installation path\n",
+            "* DONE (arules)\n",
+            "\n",
+            "The downloaded source packages are in\n",
+            "\t‘/tmp/RtmpoNtkJT/downloaded_packages’\n"
+          ],
+          "name": "stderr"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "9RfYs4aKaNKL",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 252
+        },
+        "outputId": "d83b33fe-e21a-4835-edf4-2fb7dea8ebf1"
+      },
+      "source": [
+        "\n",
+        "%%R\n",
+        "## Se carga la librería\n",
+        "library(arules)"
+      ],
+      "execution_count": 3,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "/usr/local/lib/python3.6/dist-packages/rpy2/rinterface/__init__.py:146: RRuntimeWarning: Loading required package: Matrix\n",
+            "\n",
+            "  warnings.warn(x, RRuntimeWarning)\n",
+            "/usr/local/lib/python3.6/dist-packages/rpy2/rinterface/__init__.py:146: RRuntimeWarning: \n",
+            "Attaching package: ‘arules’\n",
+            "\n",
+            "\n",
+            "  warnings.warn(x, RRuntimeWarning)\n",
+            "/usr/local/lib/python3.6/dist-packages/rpy2/rinterface/__init__.py:146: RRuntimeWarning: The following objects are masked from ‘package:base’:\n",
+            "\n",
+            "    abbreviate, write\n",
+            "\n",
+            "\n",
+            "  warnings.warn(x, RRuntimeWarning)\n"
+          ],
+          "name": "stderr"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "-u-AfQtBaTMv",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "77235c33-abb5-4239-b4c3-9633eea5642e"
+      },
+      "source": [
+        "%%writefile apriori.csv\n",
+        "x1,x2,x3\n",
+        "x1,x3\n",
+        "x2,x4\n",
+        "x1,x2,x3\n",
+        "x1,x2,x5\n",
+        "x1,x2,x3,x4\n",
+        "x4,x6\n",
+        "x1,x2,x4,x6\n",
+        "x1,x3,x4\n",
+        "x1,x2,x3\n",
+        "Overwriting apriori.csv"
+      ],
+      "execution_count": 4,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "Writing apriori.csv\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "LYuHxWkwaYb5",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "\n",
+        "%%R\n",
+        "##\n",
+        "## Se leen los datos\n",
+        "##\n",
+        "transactions <- read.transactions(\"apriori.csv\", sep = \",\")"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "wIsIn9C-absi",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 218
+        },
+        "outputId": "2b9cde15-cd59-4a87-fd1d-58d1371fec4e"
+      },
+      "source": [
+        "\n",
+        "%%R\n",
+        "##\n",
+        "## Se imprimen los items por transacción\n",
+        "##\n",
+        "inspect(transactions)"
+      ],
+      "execution_count": 6,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "     items                    \n",
+              "[1]  {x1,x2,x3}               \n",
+              "[2]  {x1,x3}                  \n",
+              "[3]  {x2,x4}                  \n",
+              "[4]  {x1,x2,x3}               \n",
+              "[5]  {x1,x2,x5}               \n",
+              "[6]  {x1,x2,x3,x4}            \n",
+              "[7]  {x4,x6}                  \n",
+              "[8]  {x1,x2,x4,x6}            \n",
+              "[9]  {x1,x3,x4}               \n",
+              "[10] {x1,x2,x3}               \n",
+              "[11] {Overwriting apriori.csv}\n"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "bZgmNux4ajL2",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "acf03d04-0c00-4f43-aba9-4b8a9e4e2634"
+      },
+      "source": [
+        "%%writefile apriori.csv\n",
+        "x1,x2,x3\n",
+        "x1,x3\n",
+        "x2,x4\n",
+        "x1,x2,x3\n",
+        "x1,x2,x5\n",
+        "x1,x2,x3,x4\n",
+        "x4,x6\n",
+        "x1,x2,x4,x6\n",
+        "x1,x3,x4\n",
+        "x1,x2,x3"
+      ],
+      "execution_count": 7,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "Overwriting apriori.csv\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "mEPTRSbYamJo",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "%%R\n",
+        "##\n",
+        "## Se leen los datos\n",
+        "##\n",
+        "transactions <- read.transactions(\"apriori.csv\", sep = \",\")"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "gkLFIwekapsZ",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 202
+        },
+        "outputId": "fab08da3-06d6-468b-e798-fd4d24bf22ba"
+      },
+      "source": [
+        "%%R\n",
+        "##\n",
+        "## Se imprimen los items por transacción\n",
+        "##\n",
+        "inspect(transactions)"
+      ],
+      "execution_count": 9,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "     items        \n",
+              "[1]  {x1,x2,x3}   \n",
+              "[2]  {x1,x3}      \n",
+              "[3]  {x2,x4}      \n",
+              "[4]  {x1,x2,x3}   \n",
+              "[5]  {x1,x2,x5}   \n",
+              "[6]  {x1,x2,x3,x4}\n",
+              "[7]  {x4,x6}      \n",
+              "[8]  {x1,x2,x4,x6}\n",
+              "[9]  {x1,x3,x4}   \n",
+              "[10] {x1,x2,x3}   \n"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "a4EP_Cc-axRx",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 370
+        },
+        "outputId": "e8fbfaff-2d82-4029-e301-15a54bc058a5"
+      },
+      "source": [
+        "%%R\n",
+        "##\n",
+        "## Se obtiene la información más relevante de los datos:\n",
+        "##\n",
+        "##    * Número de transacciones\n",
+        "##    * Número total de ítems\n",
+        "##    * Número de transacciones por cantidad de ítems (y cuartiles)\n",
+        "##\n",
+        "summary(transactions)"
+      ],
+      "execution_count": 10,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "transactions as itemMatrix in sparse format with\n",
+              " 10 rows (elements/itemsets/transactions) and\n",
+              " 6 columns (items) and a density of 0.4833333 \n",
+              "\n",
+              "most frequent items:\n",
+              "     x1      x2      x3      x4      x6 (Other) \n",
+              "      8       7       6       5       2       1 \n",
+              "\n",
+              "element (itemset/transaction) length distribution:\n",
+              "sizes\n",
+              "2 3 4 \n",
+              "3 5 2 \n",
+              "\n",
+              "   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. \n",
+              "   2.00    2.25    3.00    2.90    3.00    4.00 \n",
+              "\n",
+              "includes extended item information - examples:\n",
+              "  labels\n",
+              "1     x1\n",
+              "2     x2\n",
+              "3     x3\n"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "CRzGtSySbAPq",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 50
+        },
+        "outputId": "5fc666e2-4d4a-42dd-bd62-7d82cd076a6b"
+      },
+      "source": [
+        "%%R\n",
+        "##\n",
+        "## Se imprime la frequencia de compra, es decir,\n",
+        "## la frecuencia de cada ítem en el total de trasacciones\n",
+        "##\n",
+        "itemFrequency(transactions)"
+      ],
+      "execution_count": 11,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              " x1  x2  x3  x4  x5  x6 \n",
+              "0.8 0.7 0.6 0.5 0.1 0.2 \n"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "fG3x7cgRbEIp",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 497
+        },
+        "outputId": "869c7a58-fd98-430f-bd10-81147c6a29f4"
+      },
+      "source": [
+        "%%R\n",
+        "##\n",
+        "## Se grafica un histograma que muestra la frecuencia\n",
+        "## con que se compraron ciertos items. El parámetro\n",
+        "## `support`  corresponde a la frecuencia mínima que\n",
+        "## deben tener un item para que sea incluído en la gráfica.\n",
+        "## En este caso un item debe aparecer en 0.2 * 10 = 2\n",
+        "## transacciones para ser tenido en cuenta. Nóte que no\n",
+        "## aparece x5.\n",
+        "##\n",
+        "options(repr.plot.width = 3, repr.plot.height = 2)\n",
+        "itemFrequencyPlot(transactions, support = 0.2)"
+      ],
+      "execution_count": 12,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "image/png": "iVBORw0KGgoAAAANSUhEUgAAAeAAAAHgCAMAAABKCk6nAAACx1BMVEUAAAABAQECAgIEBAQFBQUG\nBgYHBwcJCQkKCgoLCwsMDAwNDQ0ODg4PDw8QEBARERESEhITExMUFBQVFRUWFhYXFxcYGBgZGRka\nGhobGxscHBwdHR0eHh4fHx8gICAhISEiIiIjIyMkJCQlJSUmJiYnJycoKCgpKSkrKyssLCwtLS0u\nLi4vLy8wMDAxMTEyMjIzMzM0NDQ1NTU2NjY3Nzc4ODg5OTk6Ojo7Ozs9PT0+Pj4/Pz9AQEBBQUFC\nQkJDQ0NERERFRUVHR0dISEhJSUlKSkpLS0tMTExNTU1OTk5PT09QUFBRUVFTU1NUVFRWVlZYWFhZ\nWVlaWlpbW1tcXFxdXV1eXl5fX19gYGBhYWFiYmJjY2NkZGRlZWVmZmZnZ2doaGhpaWlqampra2ts\nbGxtbW1ubm5wcHBxcXFycnJzc3N0dHR1dXV2dnZ3d3d4eHh5eXl6enp7e3t8fHx9fX1+fn5/f3+A\ngICBgYGCgoKDg4OEhISFhYWGhoaHh4eIiIiJiYmKioqLi4uMjIyNjY2Ojo6Pj4+QkJCRkZGTk5OV\nlZWWlpaXl5eZmZmampqbm5udnZ2enp6fn5+goKChoaGioqKjo6OkpKSlpaWoqKipqamqqqqrq6us\nrKytra2urq6vr6+wsLCysrKzs7O0tLS1tbW2tra3t7e4uLi5ubm6urq7u7u8vLy9vb2+vr6/v7/B\nwcHCwsLDw8PExMTFxcXGxsbHx8fJycnKysrLy8vMzMzNzc3Ozs7Pz8/Q0NDR0dHS0tLT09PU1NTV\n1dXX19fY2NjZ2dna2trb29vc3Nzd3d3e3t7f39/g4ODh4eHi4uLj4+Pk5OTl5eXm5ubn5+fo6Ojp\n6enq6urr6+vs7Ozt7e3u7u7v7+/w8PDx8fHy8vLz8/P09PT19fX29vb39/f4+Pj5+fn6+vr7+/v8\n/Pz9/f3+/v7///8wGukDAAAQMklEQVR4nO3d/3+Vdd3AcaWaWLQx5kxIXGOAgHqXpvkNtmlfzCHd\nd2pGKrcQUmoRkYYpxCYolqUoadFGwJ057u6ZCRXKLeA3HCNKQGQzaGLEaGPXH9E5Z9s5n13n2uec\n965ru67r7ev1w8441/V5P8721LNzznZd5xSHVHdK2DeAhjaAlQew8gBWHsDKA1h5ACsPYOUBrDyA\n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\nma9ZMl7JsjVEwHXL/UzaEDhwR/OOls7sqwGWFF3gg7MKSstKRs4+4t4AsKToAlcvSh753zqvxr0B\nYEnRBS7qSl2cKHZvAFhSdIEnb05dNE1zbwBYUnSBG4urFiycX1nS5N4AsKToAjvt9UsXL1t/NOt6\ngCVFGHigAJYEcGYSwNYABtgIYFsAGwFsDeDMJICtAQywEcC2ADYC2BrAmUkAWwMYYCOAbQFsBLA1\ngDOTALYGMMBGANsC2AhgawBnJgFsDWCAjQC2BbARwNYAzkwC2BrAABsBbAtgI4CtAZyZBLA1gAE2\nAtgWwEYAWwM4MwlgawADbASwLYCNALYGcGYSwNYABtgIYFsAGwFsDeDMJICtAQywEcC2ADYC2BrA\nmUkAWwMYYCOAbQFsBLA1gDOTALYGMMBGANsC2AhgawBnJgFsDWCAjQC2BbARwNYAzkwC2BrAABsB\nbAtgI4CtAZyZBLA1gAE2AtgWwEYAWwM4MwlgawADbASwLYCNALYGcGYSwNYABtgIYFsAGwFsDeDM\nJICtAQywEcC2ADYC2BrAmUkAWwMYYCOAbb1PgDuad7R0Zl8NsKToAh+cVVBaVjJy9hH3BoAlRRe4\nelF74mPrvBr3BoAlRRe4qCt1caLYvQFgSdEFnrw5ddE0zb0BYEnRBW4srlqwcH5lSZN7A8CSogvs\ntNcvXbxs/dGs6wGWFGHgng5tSX+6rynV3XX9drhkhZ8++2xmUleFr1GfMoE/42tUhfH1bbzW16jL\njFF1t/iZtGRogNeWpj99oTbVd57pt8NTtb5qNUY97GvSio7MpPfqfI36iXGj9vuaVPtLY9Qr/kb9\nNl+zZD5eyaI45OOVLIpDPl7Jojjk45UsikM+XsmiOOTjlSyKQz5eyaI45OOVLIpDPA9WHsDKA1h5\nACsPYOUBrDyAlQew8gBWHsDKA1h5ACtvOID/Htyo3Xf98FhAo5q/WxvQqD9d889gBjnOzq8tCWpU\nb8MA/Ebhr4MateOMu6ouOxnIqG1jvn7xFYFMcjYUVwYkvKvk/ueCmZRuGIDv+cqooISnP+l0nvvH\nQEZd+kun4+wDgYxqu3puQMILFzvvrnqoNfeO+TcMwNe1bgpK+BPPO87tvwhk1FmvOSfPW/iVnUHM\nurBzbuWRDQEMWvKdYxO/UFP6UgCj+hoG4MR/3EEJ1x9ynG8GA7ymzbl76rr7zjgcwKybX+q+bdT1\nAQxqLn18juOsntAdwKzehh549VYnJdx25duBjLp1o9NW6fdeLDVpd7vjnPd0ADfq8Yc7ri4P4F56\n9db7Rv8ocXnOK75HpRt64DtWJD9uGjXh3mBGzX6mbZrvUT03ynHeGr03gFHN11x9Q+fcJ/1OSo76\n74+94hwYdcj3qHRDD9x4XfJjW4V/355R317q37dn0ok7l53zUCCjPn5Dl+85vaNWjLp49IoghvU2\nxMBPTflm/VnJw14+4xulb9SmU/yO6pt07P5bG4MZtTcA375bdfiZN/wPyzTEwN2vPTZ7ZPEVi37t\n+54wPep/fD9cTd8o/yzRHGU2DI+ir/39n5auitqoSN6oIEf1NQzAdfdHcFQkb1SQo/oaBuA/VEVw\nVCRvVJCj+hoG4I7lERwVyRsV5Ki++HWh8gBWHsDKA1h5ACsPYOUBrDyAlQew8gBWHsDKA1h5ACsP\nYOX9G1vowdhPGKnPAAAAAElFTkSuQmCC\n"
+          },
+          "metadata": {
+            "tags": []
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "MsvgJGEEbHo8",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 497
+        },
+        "outputId": "21d9a20c-a1d7-4e62-c475-bcda8504f5e0"
+      },
+      "source": [
+        "\n",
+        "%%R\n",
+        "##\n",
+        "## Se obtiene la misma gráfica anterior\n",
+        "## pero para los ítems más comprados.\n",
+        "## La gráfica muestra que x1 es el más comprado\n",
+        "## y x5 el menos comprado\n",
+        "##\n",
+        "options(repr.plot.width = 3, repr.plot.height = 2)\n",
+        "itemFrequencyPlot(transactions, topN = 6)"
+      ],
+      "execution_count": 13,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "image/png": "iVBORw0KGgoAAAANSUhEUgAAAeAAAAHgCAMAAABKCk6nAAAC0FBMVEUAAAABAQECAgIEBAQFBQUG\nBgYHBwcJCQkKCgoLCwsMDAwNDQ0ODg4PDw8QEBARERESEhITExMUFBQVFRUWFhYXFxcYGBgZGRka\nGhobGxscHBwdHR0eHh4fHx8gICAhISEiIiIjIyMkJCQlJSUmJiYnJycoKCgpKSkrKyssLCwtLS0u\nLi4vLy8wMDAxMTEyMjI0NDQ1NTU2NjY3Nzc4ODg5OTk6Ojo7Ozs8PDw9PT0+Pj4/Pz9AQEBBQUFC\nQkJDQ0NERERFRUVHR0dJSUlKSkpLS0tMTExNTU1OTk5PT09QUFBRUVFTU1NUVFRWVlZYWFhZWVla\nWlpbW1tcXFxdXV1eXl5fX19gYGBhYWFiYmJjY2NkZGRlZWVmZmZnZ2doaGhpaWlqampra2tsbGxt\nbW1ubm5wcHBxcXFycnJzc3N0dHR1dXV2dnZ3d3d4eHh5eXl6enp7e3t8fHx9fX1+fn5/f3+AgICB\ngYGCgoKDg4OEhISFhYWGhoaHh4eIiIiJiYmKioqLi4uMjIyNjY2Ojo6Pj4+QkJCRkZGTk5OVlZWW\nlpaXl5eYmJiZmZmampqbm5ucnJydnZ2enp6fn5+goKChoaGioqKjo6OkpKSlpaWmpqaoqKipqamq\nqqqrq6usrKytra2urq6vr6+xsbGysrKzs7O0tLS1tbW2tra3t7e4uLi5ubm6urq7u7u8vLy9vb2+\nvr6/v7/AwMDBwcHCwsLDw8PExMTFxcXGxsbHx8fJycnKysrLy8vMzMzNzc3Ozs7Pz8/Q0NDR0dHS\n0tLT09PU1NTV1dXX19fY2NjZ2dna2trb29vc3Nzd3d3e3t7f39/g4ODh4eHi4uLj4+Pk5OTl5eXm\n5ubn5+fo6Ojp6enq6urr6+vs7Ozt7e3u7u7v7+/w8PDx8fHy8vLz8/P09PT19fX29vb39/f4+Pj5\n+fn6+vr7+/v8/Pz9/f3+/v7///912d9LAAAP5klEQVR4nO3d/X+VdR3HcbWcWLQxxkwInONOQC1N\n07xhm2bqkG7EkFQSREpMItLwBmIoiGWmpqRGbQSWOaolJpjcJKAGjhEKIsJMmhgx3Nj1L3R27dqB\nc51dO9/v93DG+XzO6/XDzjjXebvJ88Fuznauc5xHqjvuWL8DlNkAVh7AygNYeQArD2DlAaw8gJUH\n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\nvL4AAAAASUVORK5CYII=\n"
+          },
+          "metadata": {
+            "tags": []
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "6gQriWIAbWyK",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 386
+        },
+        "outputId": "4949940f-1248-4755-d6d3-0fa375a5ed15"
+      },
+      "source": [
+        "%%R\n",
+        "##\n",
+        "## La corrida con los parámetros por defecto de la\n",
+        "## función no generan reglas para los datos suministrados.\n",
+        "## El valor por defecto de support es 0.1, es decir,\n",
+        "## un item debe aparecer en un mínimo de 1 transacciones\n",
+        "## para ser considerado.\n",
+        "##\n",
+        "apriori(transactions)"
+      ],
+      "execution_count": 14,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "Apriori\n",
+              "\n",
+              "Parameter specification:\n",
+              " confidence minval smax arem  aval originalSupport maxtime support minlen\n",
+              "        0.8    0.1    1 none FALSE            TRUE       5     0.1      1\n",
+              " maxlen target   ext\n",
+              "     10  rules FALSE\n",
+              "\n",
+              "Algorithmic control:\n",
+              " filter tree heap memopt load sort verbose\n",
+              "    0.1 TRUE TRUE  FALSE TRUE    2    TRUE\n",
+              "\n",
+              "Absolute minimum support count: 1 \n",
+              "\n",
+              "set item appearances ...[0 item(s)] done [0.00s].\n",
+              "set transactions ...[6 item(s), 10 transaction(s)] done [0.00s].\n",
+              "sorting and recoding items ... [6 item(s)] done [0.00s].\n",
+              "creating transaction tree ... done [0.00s].\n",
+              "checking subsets of size 1 2 3 4 done [0.00s].\n",
+              "writing ... [18 rule(s)] done [0.00s].\n",
+              "creating S4 object  ... done [0.00s].\n",
+              "set of 18 rules \n"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "Zc9-1NSsbrO7",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 370
+        },
+        "outputId": "f9844d54-8755-4a1f-c514-b80003fddc40"
+      },
+      "source": [
+        "%%R\n",
+        "##\n",
+        "## El parámetro confianza representa el porcentaje mínimo\n",
+        "## de veces que una regla debe ser correcta para que\n",
+        "## sea considerada; esto permite eliminar reglas sin\n",
+        "## sentido. El parámetro minlen indica que las reglas\n",
+        "## deben contener al menos 2 items.\n",
+        "##\n",
+        "transactionsrules <- apriori(transactions,\n",
+        "                        parameter = list(support = 0.006,\n",
+        "                                         confidence = 0.25,\n",
+        "                                         minlen = 2))"
+      ],
+      "execution_count": 15,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "Apriori\n",
+              "\n",
+              "Parameter specification:\n",
+              " confidence minval smax arem  aval originalSupport maxtime support minlen\n",
+              "       0.25    0.1    1 none FALSE            TRUE       5   0.006      2\n",
+              " maxlen target   ext\n",
+              "     10  rules FALSE\n",
+              "\n",
+              "Algorithmic control:\n",
+              " filter tree heap memopt load sort verbose\n",
+              "    0.1 TRUE TRUE  FALSE TRUE    2    TRUE\n",
+              "\n",
+              "Absolute minimum support count: 0 \n",
+              "\n",
+              "set item appearances ...[0 item(s)] done [0.00s].\n",
+              "set transactions ...[6 item(s), 10 transaction(s)] done [0.00s].\n",
+              "sorting and recoding items ... [6 item(s)] done [0.00s].\n",
+              "creating transaction tree ... done [0.00s].\n",
+              "checking subsets of size 1 2 3 4 done [0.00s].\n",
+              "writing ... [48 rule(s)] done [0.00s].\n",
+              "creating S4 object  ... done [0.00s].\n"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "t6HmVN7Zb4qz",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "b6d3bffc-76ea-48a4-e970-2c2e4fde63ba"
+      },
+      "source": [
+        "%%R\n",
+        "##\n",
+        "## Número de reglas generadas.\n",
+        "## Se generaron 48 reglas\n",
+        "##\n",
+        "transactionsrules"
+      ],
+      "execution_count": 16,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "set of 48 rules \n"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "ZVzNwwHXcA22",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 370
+        },
+        "outputId": "6a68a5f5-bd95-4767-e6cb-783972b5e977"
+      },
+      "source": [
+        "%%R\n",
+        "##\n",
+        "## Se imprime un resumen de las reglas generadas.\n",
+        "##\n",
+        "##   * Hay 18 reglas con 2 ítems, 22 reglas con 3 ítems\n",
+        "##     y así sucesivamente.\n",
+        "##\n",
+        "##   * Luego se imprimen los estadísticos para la cantidad\n",
+        "##     de reglas por ítem\n",
+        "##\n",
+        "##   * Seguidamente aparece el resumen de las métricas de\n",
+        "##     las reglas de asociación\n",
+        "##\n",
+        "summary(transactionsrules)"
+      ],
+      "execution_count": 17,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "set of 48 rules\n",
+              "\n",
+              "rule length distribution (lhs + rhs):sizes\n",
+              " 2  3  4 \n",
+              "18 22  8 \n",
+              "\n",
+              "   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. \n",
+              "  2.000   2.000   3.000   2.792   3.000   4.000 \n",
+              "\n",
+              "summary of quality measures:\n",
+              "    support         confidence          lift            count      \n",
+              " Min.   :0.1000   Min.   :0.2500   Min.   :0.5000   Min.   :1.000  \n",
+              " 1st Qu.:0.1000   1st Qu.:0.4821   1st Qu.:0.7143   1st Qu.:1.000  \n",
+              " Median :0.1000   Median :0.6667   Median :1.0714   Median :1.000  \n",
+              " Mean   :0.2104   Mean   :0.6715   Mean   :1.1288   Mean   :2.104  \n",
+              " 3rd Qu.:0.3000   3rd Qu.:1.0000   3rd Qu.:1.2946   3rd Qu.:3.000  \n",
+              " Max.   :0.6000   Max.   :1.0000   Max.   :2.5000   Max.   :6.000  \n",
+              "\n",
+              "mining info:\n",
+              "         data ntransactions support confidence\n",
+              " transactions            10   0.006       0.25\n"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "Ca99G3CUcIv2",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 840
+        },
+        "outputId": "c18b0a89-514f-4ff1-aa38-e96a060b48f7"
+      },
+      "source": [
+        "%%R\n",
+        "##\n",
+        "## Visualización de todas las reglas.\n",
+        "##\n",
+        "inspect(transactionsrules)"
+      ],
+      "execution_count": 18,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "     lhs           rhs  support confidence lift      count\n",
+              "[1]  {x5}       => {x2} 0.1     1.0000000  1.4285714 1    \n",
+              "[2]  {x5}       => {x1} 0.1     1.0000000  1.2500000 1    \n",
+              "[3]  {x6}       => {x4} 0.2     1.0000000  2.0000000 2    \n",
+              "[4]  {x4}       => {x6} 0.2     0.4000000  2.0000000 2    \n",
+              "[5]  {x6}       => {x2} 0.1     0.5000000  0.7142857 1    \n",
+              "[6]  {x6}       => {x1} 0.1     0.5000000  0.6250000 1    \n",
+              "[7]  {x4}       => {x3} 0.2     0.4000000  0.6666667 2    \n",
+              "[8]  {x3}       => {x4} 0.2     0.3333333  0.6666667 2    \n",
+              "[9]  {x4}       => {x2} 0.3     0.6000000  0.8571429 3    \n",
+              "[10] {x2}       => {x4} 0.3     0.4285714  0.8571429 3    \n",
+              "[11] {x4}       => {x1} 0.3     0.6000000  0.7500000 3    \n",
+              "[12] {x1}       => {x4} 0.3     0.3750000  0.7500000 3    \n",
+              "[13] {x3}       => {x2} 0.4     0.6666667  0.9523810 4    \n",
+              "[14] {x2}       => {x3} 0.4     0.5714286  0.9523810 4    \n",
+              "[15] {x3}       => {x1} 0.6     1.0000000  1.2500000 6    \n",
+              "[16] {x1}       => {x3} 0.6     0.7500000  1.2500000 6    \n",
+              "[17] {x2}       => {x1} 0.6     0.8571429  1.0714286 6    \n",
+              "[18] {x1}       => {x2} 0.6     0.7500000  1.0714286 6    \n",
+              "[19] {x2,x5}    => {x1} 0.1     1.0000000  1.2500000 1    \n",
+              "[20] {x1,x5}    => {x2} 0.1     1.0000000  1.4285714 1    \n",
+              "[21] {x4,x6}    => {x2} 0.1     0.5000000  0.7142857 1    \n",
+              "[22] {x2,x6}    => {x4} 0.1     1.0000000  2.0000000 1    \n",
+              "[23] {x2,x4}    => {x6} 0.1     0.3333333  1.6666667 1    \n",
+              "[24] {x4,x6}    => {x1} 0.1     0.5000000  0.6250000 1    \n",
+              "[25] {x1,x6}    => {x4} 0.1     1.0000000  2.0000000 1    \n",
+              "[26] {x1,x4}    => {x6} 0.1     0.3333333  1.6666667 1    \n",
+              "[27] {x2,x6}    => {x1} 0.1     1.0000000  1.2500000 1    \n",
+              "[28] {x1,x6}    => {x2} 0.1     1.0000000  1.4285714 1    \n",
+              "[29] {x3,x4}    => {x2} 0.1     0.5000000  0.7142857 1    \n",
+              "[30] {x2,x4}    => {x3} 0.1     0.3333333  0.5555556 1    \n",
+              "[31] {x2,x3}    => {x4} 0.1     0.2500000  0.5000000 1    \n",
+              "[32] {x3,x4}    => {x1} 0.2     1.0000000  1.2500000 2    \n",
+              "[33] {x1,x4}    => {x3} 0.2     0.6666667  1.1111111 2    \n",
+              "[34] {x1,x3}    => {x4} 0.2     0.3333333  0.6666667 2    \n",
+              "[35] {x2,x4}    => {x1} 0.2     0.6666667  0.8333333 2    \n",
+              "[36] {x1,x4}    => {x2} 0.2     0.6666667  0.9523810 2    \n",
+              "[37] {x1,x2}    => {x4} 0.2     0.3333333  0.6666667 2    \n",
+              "[38] {x2,x3}    => {x1} 0.4     1.0000000  1.2500000 4    \n",
+              "[39] {x1,x3}    => {x2} 0.4     0.6666667  0.9523810 4    \n",
+              "[40] {x1,x2}    => {x3} 0.4     0.6666667  1.1111111 4    \n",
+              "[41] {x2,x4,x6} => {x1} 0.1     1.0000000  1.2500000 1    \n",
+              "[42] {x1,x4,x6} => {x2} 0.1     1.0000000  1.4285714 1    \n",
+              "[43] {x1,x2,x6} => {x4} 0.1     1.0000000  2.0000000 1    \n",
+              "[44] {x1,x2,x4} => {x6} 0.1     0.5000000  2.5000000 1    \n",
+              "[45] {x2,x3,x4} => {x1} 0.1     1.0000000  1.2500000 1    \n",
+              "[46] {x1,x3,x4} => {x2} 0.1     0.5000000  0.7142857 1    \n",
+              "[47] {x1,x2,x4} => {x3} 0.1     0.5000000  0.8333333 1    \n",
+              "[48] {x1,x2,x3} => {x4} 0.1     0.2500000  0.5000000 1    \n"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "nigcgk_acSEP",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 118
+        },
+        "outputId": "fb2b4e2e-47b0-45f2-92c0-011b295b6a81"
+      },
+      "source": [
+        "%%R\n",
+        "##\n",
+        "## Se puede inspeccionar un conjunto de reglas en particular\n",
+        "##\n",
+        "inspect(sort(transactionsrules, by = \"lift\")[1:5])"
+      ],
+      "execution_count": 19,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "    lhs           rhs  support confidence lift count\n",
+              "[1] {x1,x2,x4} => {x6} 0.1     0.5        2.5  1    \n",
+              "[2] {x6}       => {x4} 0.2     1.0        2.0  2    \n",
+              "[3] {x4}       => {x6} 0.2     0.4        2.0  2    \n",
+              "[4] {x2,x6}    => {x4} 0.1     1.0        2.0  1    \n",
+              "[5] {x1,x6}    => {x4} 0.1     1.0        2.0  1    \n"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "4xernuwnclzq",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 840
+        },
+        "outputId": "c2956f65-b49c-475e-978a-61fdcb51082e"
+      },
+      "source": [
+        "%%R\n",
+        "##\n",
+        "## Se puede obtener un subconjunto de las reglas que\n",
+        "## cumplen una condición particular\n",
+        "##\n",
+        "berryrules <- subset(transactionsrules, items %in% \"x2\")\n",
+        "inspect(transactionsrules)"
+      ],
+      "execution_count": 20,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "     lhs           rhs  support confidence lift      count\n",
+              "[1]  {x5}       => {x2} 0.1     1.0000000  1.4285714 1    \n",
+              "[2]  {x5}       => {x1} 0.1     1.0000000  1.2500000 1    \n",
+              "[3]  {x6}       => {x4} 0.2     1.0000000  2.0000000 2    \n",
+              "[4]  {x4}       => {x6} 0.2     0.4000000  2.0000000 2    \n",
+              "[5]  {x6}       => {x2} 0.1     0.5000000  0.7142857 1    \n",
+              "[6]  {x6}       => {x1} 0.1     0.5000000  0.6250000 1    \n",
+              "[7]  {x4}       => {x3} 0.2     0.4000000  0.6666667 2    \n",
+              "[8]  {x3}       => {x4} 0.2     0.3333333  0.6666667 2    \n",
+              "[9]  {x4}       => {x2} 0.3     0.6000000  0.8571429 3    \n",
+              "[10] {x2}       => {x4} 0.3     0.4285714  0.8571429 3    \n",
+              "[11] {x4}       => {x1} 0.3     0.6000000  0.7500000 3    \n",
+              "[12] {x1}       => {x4} 0.3     0.3750000  0.7500000 3    \n",
+              "[13] {x3}       => {x2} 0.4     0.6666667  0.9523810 4    \n",
+              "[14] {x2}       => {x3} 0.4     0.5714286  0.9523810 4    \n",
+              "[15] {x3}       => {x1} 0.6     1.0000000  1.2500000 6    \n",
+              "[16] {x1}       => {x3} 0.6     0.7500000  1.2500000 6    \n",
+              "[17] {x2}       => {x1} 0.6     0.8571429  1.0714286 6    \n",
+              "[18] {x1}       => {x2} 0.6     0.7500000  1.0714286 6    \n",
+              "[19] {x2,x5}    => {x1} 0.1     1.0000000  1.2500000 1    \n",
+              "[20] {x1,x5}    => {x2} 0.1     1.0000000  1.4285714 1    \n",
+              "[21] {x4,x6}    => {x2} 0.1     0.5000000  0.7142857 1    \n",
+              "[22] {x2,x6}    => {x4} 0.1     1.0000000  2.0000000 1    \n",
+              "[23] {x2,x4}    => {x6} 0.1     0.3333333  1.6666667 1    \n",
+              "[24] {x4,x6}    => {x1} 0.1     0.5000000  0.6250000 1    \n",
+              "[25] {x1,x6}    => {x4} 0.1     1.0000000  2.0000000 1    \n",
+              "[26] {x1,x4}    => {x6} 0.1     0.3333333  1.6666667 1    \n",
+              "[27] {x2,x6}    => {x1} 0.1     1.0000000  1.2500000 1    \n",
+              "[28] {x1,x6}    => {x2} 0.1     1.0000000  1.4285714 1    \n",
+              "[29] {x3,x4}    => {x2} 0.1     0.5000000  0.7142857 1    \n",
+              "[30] {x2,x4}    => {x3} 0.1     0.3333333  0.5555556 1    \n",
+              "[31] {x2,x3}    => {x4} 0.1     0.2500000  0.5000000 1    \n",
+              "[32] {x3,x4}    => {x1} 0.2     1.0000000  1.2500000 2    \n",
+              "[33] {x1,x4}    => {x3} 0.2     0.6666667  1.1111111 2    \n",
+              "[34] {x1,x3}    => {x4} 0.2     0.3333333  0.6666667 2    \n",
+              "[35] {x2,x4}    => {x1} 0.2     0.6666667  0.8333333 2    \n",
+              "[36] {x1,x4}    => {x2} 0.2     0.6666667  0.9523810 2    \n",
+              "[37] {x1,x2}    => {x4} 0.2     0.3333333  0.6666667 2    \n",
+              "[38] {x2,x3}    => {x1} 0.4     1.0000000  1.2500000 4    \n",
+              "[39] {x1,x3}    => {x2} 0.4     0.6666667  0.9523810 4    \n",
+              "[40] {x1,x2}    => {x3} 0.4     0.6666667  1.1111111 4    \n",
+              "[41] {x2,x4,x6} => {x1} 0.1     1.0000000  1.2500000 1    \n",
+              "[42] {x1,x4,x6} => {x2} 0.1     1.0000000  1.4285714 1    \n",
+              "[43] {x1,x2,x6} => {x4} 0.1     1.0000000  2.0000000 1    \n",
+              "[44] {x1,x2,x4} => {x6} 0.1     0.5000000  2.5000000 1    \n",
+              "[45] {x2,x3,x4} => {x1} 0.1     1.0000000  1.2500000 1    \n",
+              "[46] {x1,x3,x4} => {x2} 0.1     0.5000000  0.7142857 1    \n",
+              "[47] {x1,x2,x4} => {x3} 0.1     0.5000000  0.8333333 1    \n",
+              "[48] {x1,x2,x3} => {x4} 0.1     0.2500000  0.5000000 1    \n"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          }
+        }
+      ]
+    }
+  ]
+}
